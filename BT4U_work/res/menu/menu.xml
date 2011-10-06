@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/about" android:title="About"></item>
+    <item android:id="@+id/favorites" android:title="Add to Favorites"></item>
+    <item android:id="@+id/changeTimes" android:title="Time Settings"></item>
+    <item android:id="@+id/refresh" android:title="Refresh"></item>
+    
+</menu>

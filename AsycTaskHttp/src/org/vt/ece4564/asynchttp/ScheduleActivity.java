@@ -1,0 +1,134 @@
+package org.vt.ece4564.asynchttp;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.http.HttpResponse;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class ScheduleActivity extends Activity implements
+		OnItemSelectedListener, HttpCallback {
+
+	private static final String TAG = ScheduleActivity.class.getName();
+
+	private String[] teams_ = new String[] { "VT", "Georgia", "UCLA",
+			"Florida", "Wisconsin", "Michigan" };
+
+	private LinearLayout schedulePane_;
+	private Spinner team_;
+	private String token_;
+	private String user_;
+	private ProgressDialog progress_;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// Step 8. Set the layout to the schedule.xml
+		// layout. You will need to use the setContentView() method
+		// and pass it the id of the correct layout.
+		
+		setContentView(R.layout.schedule);
+		
+
+		// Step 9. Here we read some data that was passed to
+		// us by the Activity that opened us. 
+		Intent i = getIntent();
+		token_ = i.getStringExtra("token");
+		user_ = i.getStringExtra("user");
+
+		schedulePane_ = (LinearLayout) findViewById(R.id.schedule);
+		team_ = (Spinner) findViewById(R.id.team);
+
+		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+				this, android.R.layout.simple_spinner_dropdown_item, teams_);
+		team_.setAdapter(spinnerArrayAdapter);
+
+		team_.setOnItemSelectedListener(this);
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		progress_ = ProgressDialog.show(this, "Fetching schedule...", "");
+
+		String selectedteam = teams_[arg2];
+		
+		// Step 10. Create a map to store the key value pairs that
+		// we are going to send to the server in the post. The map
+		// should be a Map<String,String> that is initialized to a 
+		// new HashMap<String,String>. You need to use the put()
+		// method of the map to add the following key/value pairs:
+		// user = <value for the user>
+		// token = <value for the token>
+		// team = <value for the selectedteam>
+
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("token", token_);
+		data.put("user", user_);
+		data.put("team", selectedteam);
+		
+		// Step 11. You need to send the data in the map to the
+		// server as a POST request. Use the HttpUtils class to
+		// send a post to http://vtnetapps.appspot.com/schedule
+		// and make sure that this object is used as the callback.
+		HttpUtils.get().doPost("http://vtnetapps.appspot.com/schedule", data, this);
+
+	}
+
+	
+	public void onResponse(HttpResponse resp) {
+		progress_.hide();
+
+		schedulePane_.removeAllViews();
+		
+		try {
+			String data = HttpUtils.get().responseToString(resp);
+			int start = data.indexOf("<h3>");
+			while(start > 0){
+				int end = data.indexOf("</h3>",start + 4);
+				if(end > start){
+					String game = data.substring(start + "<h3>".length(),end);
+					
+					// Step 11. Create a new TextView and set its text
+					// to the game String. 
+					
+					TextView v = null;
+					v = new TextView(this);
+					v.setText(game);
+					schedulePane_.addView(v);
+				}
+				start = data.indexOf("<h3>",end + "</h3>".length());
+			}
+		} catch (Exception e) {
+			Log.e(TAG, "Error parsing schedule!", e);
+		}
+	}
+
+	
+	public void onError(Exception e) {
+		progress_.hide();
+		Toast t = Toast.makeText(this,
+				"Error fetching schedule! " + e.getLocalizedMessage(), 2000);
+		t.show();
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+
+	}
+
+}

@@ -1,0 +1,33 @@
+<!--?xml version="1.0" encoding="utf-8"? -->
+<linearlayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/popup_element" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:background="#444444"
+	android:padding="10px" android:orientation="vertical">
+
+	<textview android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_centerhorizontal="true"
+		android:text="Transfering data">
+
+		<textview  android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_gravity="center_vertical"
+			android:text="Status">
+
+			<textview android:id="@+id/server_status_text"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:text="Awaiting answer..." android:paddingleft="10sp">
+
+				<linearlayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:layout_width="fill_parent" android:layout_height="fill_parent"
+					android:orientation="horizontal" android:gravity="center_horizontal|bottom">
+
+					<button android:id="@+id/end_data_send_button" 
+						android:drawablepadding="3sp" android:layout_centerhorizontal="true"
+						android:text="Cancel">
+
+
+					</button>
+				</linearlayout>
+			</textview>
+		</textview>
+	</textview>
+</linearlayout>

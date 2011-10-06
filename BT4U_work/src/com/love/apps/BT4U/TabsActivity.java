@@ -1,0 +1,50 @@
+package com.love.apps.BT4U;
+
+
+import com.google.ads.*;
+
+import android.app.TabActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TabHost;
+
+public class TabsActivity extends TabActivity {
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		TabHost tabHost = getTabHost();  // The activity TabHost
+		TabHost.TabSpec spec;  // Resusable TabSpec for each tab
+		Intent intent;  // Reusable Intent for each tab
+
+		// Create an Intent to launch an Activity for the tab (to be reused)
+		intent = new Intent().setClass(this, RouteInfo.class);
+
+		// Initialize a TabSpec for each tab and add it to the TabHost
+		spec = tabHost.newTabSpec("times").setIndicator("Bus Times").setContent(intent);
+		tabHost.addTab(spec);
+
+		// Do the same for the other tab
+		intent = new Intent().setClass(this, Favorites.class);
+		spec = tabHost.newTabSpec("favorites").setIndicator("Favorites").setContent(intent);
+		tabHost.addTab(spec);
+
+
+		tabHost.setCurrentTab(0);
+
+
+		AdView av = (AdView) findViewById(R.id.adView);
+		av.loadAd(new AdRequest());
+		AdRequest re = new AdRequest();
+	    //re.setTesting(true);
+	    re.setGender(AdRequest.Gender.FEMALE); 
+	    av.loadAd(re);
+
+	}
+
+
+}
+
+

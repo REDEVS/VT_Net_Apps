@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="1">
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout1">
+        <Button android:text="Go" android:layout_height="wrap_content" android:layout_width="91dp" android:id="@+id/goButton"></Button>
+    </LinearLayout>
+<Spinner android:id="@+id/spinner1" android:layout_width="match_parent" android:layout_height="wrap_content"></Spinner>
+<EditText android:id="@+id/editText1" android:layout_height="wrap_content" android:layout_width="215dp" android:layout_weight="0.11" android:text="Hello"></EditText>
+</LinearLayout>

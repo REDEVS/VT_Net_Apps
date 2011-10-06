@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:background="@drawable/orange" android:weightSum="1" android:tag="BT4U">
+    <TabHost android:id="@android:id/tabhost" android:layout_width="fill_parent" android:layout_height="91dp" android:layout_weight="1.04">
+        <TabWidget android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@android:id/tabs">
+            <FrameLayout android:id="@android:id/tabcontent" android:layout_width="fill_parent" android:layout_height="fill_parent">
+                <LinearLayout android:id="@+id/tab1" android:layout_width="320dp" android:layout_height="406dp">
+                    <LinearLayout android:orientation="vertical" android:layout_height="390dp" android:layout_width="fill_parent" android:weightSum="1" android:id="@+id/linearLayout3">
+                        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:weightSum="1" android:id="@+id/linearLayout5">
+                            <TextView android:layout_width="wrap_content" android:textColor="#330000" android:layout_height="52dp" android:gravity="center_vertical|center_horizontal|center" android:id="@+id/textView1" android:text="Route Name:"></TextView>
+                            <Spinner android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/spinner1"></Spinner>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout6">
+                            <TextView android:layout_width="wrap_content" android:textColor="#330000" android:layout_height="52dp" android:gravity="center_vertical|center_horizontal|center" android:id="@+id/textView3" android:text="Stop Name:   "></TextView>
+                            <Spinner android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/spinner2"></Spinner>
+                        </LinearLayout>
+                        <LinearLayout android:background="@drawable/maroon" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="2dp" android:id="@+id/LinearLayout01"></LinearLayout>
+                        <TextView android:layout_width="fill_parent" android:textColor="#330000" android:layout_height="75dp" android:layout_weight="0.95" android:scrollbars="vertical" android:textAppearance="?android:attr/textAppearanceLarge" android:maxLines="20" android:id="@+id/textView2" android:text="     "></TextView>
+                        <LinearLayout android:background="@drawable/maroon" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="20dp" android:id="@+id/linearLayout1" android:layout_weight="0.24"></LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/tab2">
+                    <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="fill_parent" android:id="@+id/linearLayout4"></LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+        </TabWidget>
+    </TabHost>
+
+</LinearLayout>

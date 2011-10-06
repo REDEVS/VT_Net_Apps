@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<LinearLayout android:id="@+id/LinearLayout01" android:layout_width="wrap_content" android:layout_height="wrap_content"><EditText android:layout_height="wrap_content" android:id="@+id/urlField" android:text="Enter a URL" android:layout_width="250dip"></EditText><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/goButton" android:text="Go"></Button></LinearLayout><TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:id="@+id/requestStatus"/>
+
+
+
+
+
+
+<ScrollView android:id="@+id/ScrollView01" android:layout_width="wrap_content" android:layout_height="wrap_content"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/responseValue"></TextView></ScrollView>
+</LinearLayout>

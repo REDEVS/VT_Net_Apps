@@ -1,0 +1,233 @@
+package org.vt.ece4564.asynchttp;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.CheckedTextView;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class LoginActivity extends Activity implements OnClickListener, HttpCallback {
+	
+	private static final String TAG = LoginActivity.class.getName();
+
+	private EditText password_;
+	private EditText user_;
+	private Button loginButton_;
+	private TextView text_;
+	
+	private ProgressDialog progress_;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		// Step 1. Connect the password, user
+		// and login button to the appropriate
+		// member variables in this class
+		
+		password_ = (EditText) findViewById(R.id.password);
+		user_ = (EditText) findViewById(R.id.username);
+		loginButton_ = (Button) findViewById(R.id.login);
+		text_ = (TextView) findViewById(R.id.login);
+		
+		// Step 2. Connect the button's onClickListener
+		// to this object.
+		loginButton_.setOnClickListener(this);
+	}
+
+	
+	public void onClick(View v) {
+		
+		// Step 3. Fetch the user name and password
+		// from the user_ and password_ member variables
+		// connected to the GUI elements
+		String user = null;
+		String pass = null;
+		
+		
+		
+		progress_ = ProgressDialog.show(this, "Logging in...", "");
+		
+		HttpUtils.get().doGet("http://www.bt4u.org/BT4U_WebService.asmx/GetRoutes?stopCode=", this);
+		
+		try {
+
+            //HttpResponse response = client.execute(post);
+            //HttpEntity r_entity = response.getEntity();
+            //String xmlString = EntityUtils.toString(r_entity);
+
+    HttpClient client = new DefaultHttpClient();  
+    String URL = "http://api.flurry.com/eventMetrics/Event?apiAccessCode=YHJBA13CSKTMS6XHTM6M&apiKey=6XQY729FDU1CR9FKXVZP&startDate=2011-2-28&endDate=2011-3-1&eventName=Tip%20Calculated";
+    HttpGet get = new HttpGet(URL);
+    get.addHeader("Accept", "application/xml");
+    get.addHeader("Content-Type", "application/xml");
+    HttpResponse responsePost = client.execute(get);  
+    HttpEntity resEntity = responsePost.getEntity(); 
+    if (resEntity != null) 
+
+    {  
+                System.out.println("Not null!");
+
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+                DocumentBuilder db = dbf.newDocumentBuilder();
+
+                String responseXml = EntityUtils.toString(responsePost.getEntity());
+                Document doc = db.parse(responseXml);
+                doc.getDocumentElement().normalize();
+
+                NodeList nodeList = doc.getElementsByTagName("eventMetrics");
+
+
+                int count = 0;
+                for (int i = 0; i < nodeList.getLength(); i++)
+                {
+                    Node node = nodeList.item(i);   
+
+                    Element fstElmnt = (Element) node;
+
+                    NodeList nameList = fstElmnt.getElementsByTagName("day");
+
+                    Element dayElement = (Element) nameList.item(0);
+
+                    nameList = dayElement.getChildNodes();
+
+                    String countString = dayElement.getAttribute("totalCount");
+                    System.out.println(countString);
+                    text_.append(countString);
+                    count = Integer.parseInt(countString);
+                    System.out.println(count);
+                    count += count;
+
+                }
+                user_.setText("working to here");
+    }
+
+} catch (Exception e) {
+
+                System.out.println("XML Passing Exception = " + e);
+
+            }
+		//user = user_.getText().toString();
+	//	pass = password_.getText().toString();
+		
+
+		/*if (user.trim().length() > 0 && pass.trim().length() > 0) {
+			loginButton_.setEnabled(false);
+			
+			progress_ = ProgressDialog.show(this, "Logging in...", "");
+			
+			// Step 4. Send an HTTP get to:
+			// http://vtnetapps.appspot.com/login
+			// using the HTTPUtils class. Make sure and implement
+			// the HttpCallback interface and pass this object
+			// into the get request so that the onResponse() and
+			// onError() methods get called when the request is
+			// finished.
+			//
+			// You should append the user and pass to the
+			// URL (e.g. http://vtnetapps.appspot.com/login?user=joe&pass=reallyinsecure)
+			
+			String url = "http://vtnetapps.appspot.com/login?user=" + user + "&pass=" + pass ;
+			HttpUtils.get().doGet(url, this);
+			
+
+		}*/
+		
+		
+	}
+
+	
+	public void onResponse(HttpResponse resp) {
+		loginButton_.setEnabled(true);
+		progress_.hide();
+		
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder;
+		try {
+			builder = factory.newDocumentBuilder();
+		
+			Document doc = builder.parse(resp.getEntity().getContent());
+			text_.setText(doc.getTextContent());
+			
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		/*
+		try{
+			// Step 5. Extract the data that was returned from the
+			// server as a string. You can use the HttpUtils class
+			// to help you do this.
+			String data = null;
+			data = HttpUtils.get().responseToString(resp);
+			
+		
+			// Step 6. This is a simple example of how to use the
+			// String indexOf and substring functions to parse data
+			// from a response. You don't need to do anything for this
+			// step, just be aware that these functions exist so that
+			// you can use them.
+			String token = data.substring(data.indexOf("<token>")+"<token>".length(),data.indexOf("</token>"));
+			String user = user_.getText().toString();
+			
+			// Step 7. This is an example of how to transition to another
+			// GUI screen within an app. We send out an Intent that tells
+			// Android to open the other screen that is managed by the
+			// ScheduleActvity class. We also pass some data to that class
+			// through the putExtra() method. This will create key/value
+			// pairs that the ScheduleActivity object can read. You
+			// don't have to do anything for this step.
+			Intent i = new Intent(this, ScheduleActivity.class);
+			i.putExtra("token", token);
+			i.putExtra("user", user);
+			// This is the line where we tell Android to transition to
+			// the screen controlled by the ScheduleActivity class.
+			startActivity(i);
+			
+		}catch (Exception e) {
+			Log.e(TAG, "Unexpected exception reading server's response.",e);
+		}*/
+	}
+
+	
+	public void onError(Exception e) {
+		Log.e(TAG, "Unable to login",e);
+		
+		loginButton_.setEnabled(true);
+		progress_.hide();
+		
+		Toast t = Toast.makeText(this, "Error contacting server! "+e.getLocalizedMessage(), 3000);
+		t.show();
+	}
+
+}

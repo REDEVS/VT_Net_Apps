@@ -1,0 +1,130 @@
+package org.vt.ece4564.asynchttp;
+
+import org.apache.http.HttpResponse;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class LoginActivity extends Activity implements OnClickListener, HttpCallback {
+	
+	private static final String TAG = LoginActivity.class.getName();
+
+	private EditText password_;
+	private EditText user_;
+	private Button loginButton_;
+	
+	private ProgressDialog progress_;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		// Step 1. Connect the password, user
+		// and login button to the appropriate
+		// member variables in this class
+		
+		password_ = (EditText) findViewById(R.id.password);
+		user_ = (EditText) findViewById(R.id.username);
+		loginButton_ = (Button) findViewById(R.id.login);
+		
+		// Step 2. Connect the button's onClickListener
+		// to this object.
+		loginButton_.setOnClickListener(this);
+	}
+
+	
+	public void onClick(View v) {
+		
+		// Step 3. Fetch the user name and password
+		// from the user_ and password_ member variables
+		// connected to the GUI elements
+		String user = null;
+		String pass = null;
+		
+		user = user_.getText().toString();
+		pass = password_.getText().toString();
+
+		if (user.trim().length() > 0 && pass.trim().length() > 0) {
+			loginButton_.setEnabled(false);
+			
+			progress_ = ProgressDialog.show(this, "Logging in...", "");
+			
+			// Step 4. Send an HTTP get to:
+			// http://vtnetapps.appspot.com/login
+			// using the HTTPUtils class. Make sure and implement
+			// the HttpCallback interface and pass this object
+			// into the get request so that the onResponse() and
+			// onError() methods get called when the request is
+			// finished.
+			//
+			// You should append the user and pass to the
+			// URL (e.g. http://vtnetapps.appspot.com/login?user=joe&pass=reallyinsecure)
+			
+			String url = "http://vtnetapps.appspot.com/login?user=" + user + "&" + pass + "=reallyinsecure";
+			HttpUtils.get().doGet(url, this);
+			
+
+		}
+	}
+
+	
+	public void onResponse(HttpResponse resp) {
+		loginButton_.setEnabled(true);
+		progress_.hide();
+		
+		try{
+			// Step 5. Extract the data that was returned from the
+			// server as a string. You can use the HttpUtils class
+			// to help you do this.
+			String data = null;
+			data = HttpUtils.get().responseToString(resp);
+			
+		
+			// Step 6. This is a simple example of how to use the
+			// String indexOf and substring functions to parse data
+			// from a response. You don't need to do anything for this
+			// step, just be aware that these functions exist so that
+			// you can use them.
+			String token = data.substring(data.indexOf("<token>")+"<token>".length(),data.indexOf("</token>"));
+			String user = user_.getText().toString();
+			
+			// Step 7. This is an example of how to transition to another
+			// GUI screen within an app. We send out an Intent that tells
+			// Android to open the other screen that is managed by the
+			// ScheduleActvity class. We also pass some data to that class
+			// through the putExtra() method. This will create key/value
+			// pairs that the ScheduleActivity object can read. You
+			// don't have to do anything for this step.
+			Intent i = new Intent(this, ScheduleActivity.class);
+			i.putExtra("token", token);
+			i.putExtra("user", user);
+			// This is the line where we tell Android to transition to
+			// the screen controlled by the ScheduleActivity class.
+			startActivity(i);
+			
+		}catch (Exception e) {
+			Log.e(TAG, "Unexpected exception reading server's response.",e);
+		}
+	}
+
+	
+	public void onError(Exception e) {
+		Log.e(TAG, "Unable to login",e);
+		
+		loginButton_.setEnabled(true);
+		progress_.hide();
+		
+		Toast t = Toast.makeText(this, "Error contacting server! "+e.getLocalizedMessage(), 3000);
+		t.show();
+	}
+
+}
